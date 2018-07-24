@@ -1,0 +1,13 @@
+name: .
+version: 0.1.0
+
+authors:
+  - Robert L Carpenter <robert@robacarp.com>
+
+targets:
+  .:
+    main: src/..cr
+
+crystal: 0.25.1
+
+license: MIT
