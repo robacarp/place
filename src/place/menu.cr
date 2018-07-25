@@ -4,10 +4,7 @@ module Place
     RESTORE = "\x1b8"#"\x1b[u"
     CLEAR_DOWN = "\x1b[J"
     CLEAR_SCREEN = "\x1b[2J"
-    CRLF = "\n\r"
 
-    ENABLE_ALT_BUFFER = "\x1b[?1049h"
-    DISABLE_ALT_BUFFER = "\x1b[?1049l"
 
     getter heading
     getter options
@@ -15,11 +12,6 @@ module Place
     getter search_string
     getter matches
     getter choice : String?
-
-    def puts(thing)
-      print thing
-      print "#{CRLF}"
-    end
 
     def initialize(@heading : String, @options : Array(String))
       @chosen = false
@@ -29,12 +21,10 @@ module Place
     end
 
     def choose
-      print ENABLE_ALT_BUFFER
       print SAVE
       display
       ask_for_input
-      print DISABLE_ALT_BUFFER
-
+      clear
       choice
     end
 
@@ -66,12 +56,6 @@ module Place
     def match?(o : String) : Bool
       return false if search_string.blank?
       Matcher.search(o).for(search_string)
-
-      # if search_string =~ /[A-Z]/
-      #   o.starts_with? search_string
-      # else
-      #   o.downcase.starts_with? search_string.downcase
-      # end
     end
 
     def build_matches
@@ -90,7 +74,7 @@ module Place
     end
 
     def ask_for_input
-      STDIN.raw do
+      State.with_tty_raw do
         loop do
           char = STDIN.read_char
 
