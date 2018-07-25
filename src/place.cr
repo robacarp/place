@@ -1,35 +1,7 @@
 require "colorize"
+require "option_parser"
 
 require "./place/*"
-
-module Place
-  class Searcher
-    def initialize(@base_dir : String)
-      @current_dir = Dir.new @base_dir
-    end
-
-    def search_in
-      search
-      puts "Finished at #{@current_dir.path}"
-    end
-
-    private def search
-      descendants = @current_dir.children
-        .select do |path|
-          File.info( File.join @current_dir.path, path ).directory?
-        end
-
-      choice = Menu.new("Searching in #{@current_dir.path}...", descendants.sort).choose
-
-      if choice
-        @current_dir = Dir.new(File.join @current_dir.path, choice)
-        search
-      end
-    end
-  end
-end
-
-require "option_parser"
 
 placement_dir = "/Users/robert/Box Sync/Files"
 files_to_place = [] of String
