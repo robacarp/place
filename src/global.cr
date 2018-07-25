@@ -3,13 +3,17 @@ require "./place/state"
 CRLF = "\n\r"
 
 def puts(thing) : Nil
-  if Place::State.tty_raw?
+  if true#Place::State.tty_raw?
     STDOUT.print thing
     STDOUT.print CRLF
     STDOUT.flush
   else
     STDOUT.puts thing
   end
+end
+
+def puts() : Nil
+  puts ""
 end
 
 def with_alternate_buffer(&block)

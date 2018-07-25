@@ -26,10 +26,11 @@ module Place
       "[32~" => :f18,
       "[33~" => :f19,
       "[34~" => :f20,
-      "[A" => :arrow_up,
-      "[B" => :arrow_down,
-      "[D" => :arrow_left,
-      "[C" => :arrow_right
+      "[A" => :up_arrow,
+      "[B" => :down_arrow,
+      "[D" => :left_arrow,
+      "[C" => :right_arrow,
+      "[3~"  => :delete
     }
 
     def self.decode_bytes(bytes : Bytes)
@@ -42,7 +43,7 @@ module Place
       if resolved = MAPPING[string]?
         resolved
       else
-        :unknown
+        :unknown_function
       end
     end
   end
