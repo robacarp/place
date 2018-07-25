@@ -5,11 +5,13 @@ module Place
     CLEAR_DOWN = "\x1b[J"
     CLEAR_SCREEN = "\x1b[2J"
 
+    BUFFER_SIZE = 6
 
     getter heading
     getter options
     getter search_chars
     getter search_string
+    getter input_buffer
     getter matches
     getter choice : String?
 
@@ -18,6 +20,8 @@ module Place
       @matches = [] of String
       @search_chars = [] of Char
       @search_string = ""
+
+      @input_buffer = Bytes.new BUFFER_SIZE
     end
 
     def choose
@@ -76,32 +80,41 @@ module Place
     def ask_for_input
       State.with_tty_raw do
         loop do
-          char = STDIN.read_char
+          @input_buffer = Bytes.new BUFFER_SIZE
+          count = STDIN.read @input_buffer
 
-          if char
-            search_chars << char
+          # puts "read #{count} bytes at once: #{@input_buffer} #{@input_buffer.map{|c| c.chr}.join("").lstrip('\e').rstrip('\u{0}')}"
+
+          if count == 0
+            next
+          elsif count == 1
+            process_input_char
+            rebuild_search_string
+            build_matches
+          else
+            decode_function_character
           end
-
-          process_input_char
-          rebuild_search_string
-          build_matches
-          clear
-          display
 
           break if chosen?
           break if search_chars.size > 100
+
+          clear
+          display
         end
       end
     end
 
     def process_input_char : Nil
-      case search_chars.last
+      first_char = input_buffer.first.chr
+
+      case first_char
       when .control?
         decode_control_character
       when .alphanumeric?
+        search_chars << first_char
       when .whitespace?
       else
-        puts "unrecognized character: #{search_chars.last.ord}"
+        puts "unrecognized character: #{first_char} - #{input_buffer.first}"
       end
     end
 
@@ -126,8 +139,7 @@ module Place
     end
 
     def decode_control_character : Nil
-      control = search_chars.pop
-      case control.ord
+      case input_buffer.first
       when 1   # ^a
         clear_search
       when 2   # ^b
@@ -135,6 +147,9 @@ module Place
         exit 1
       when 5   # ^e
       when 6   # ^f
+      when 12  # ^l
+        clear
+        display
       when 13  # Enter Key
         take_result
       when 14  # ^n
@@ -142,19 +157,34 @@ module Place
       when 23  # ^w
       when 26  # ^z
       when 27  # ESC
-        if search_chars.empty?
-          @choice = nil
-          @chosen = true
-        else
-          clear_search
-        end
-      when 91  # arrow?
+        esc_key
       when 127 # backspace
         search_chars.pop unless search_chars.empty?
+      when 224
+        puts
+        puts "arrow?"
+        puts
       else
         puts "control character:"
-        puts control.ord
+        puts input_buffer.first
         puts
+      end
+    end
+
+    def esc_key
+      puts "ESC key"
+      return
+      if search_chars.empty?
+        @choice = nil
+        @chosen = true
+      else
+        clear_search
+      end
+    end
+
+    def decode_function_character
+      key = FunctionKeys.decode_bytes input_buffer
+      if key == :arrow_up
       end
     end
 
