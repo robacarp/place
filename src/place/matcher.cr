@@ -23,7 +23,7 @@ module Place
         needle = needles[needle_position]
 
         if position = haystack.index(needle, haystack_position)
-          haystack_position = position
+          haystack_position = position + 1
         else
           return false
         end
