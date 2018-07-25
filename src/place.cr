@@ -1,3 +1,5 @@
+require "./global"
+
 require "colorize"
 require "option_parser"
 
@@ -40,15 +42,19 @@ if ! File.exists?(placement_dir) || ! File.info(placement_dir).directory?
   exit 1
 end
 
-# if ! files_to_place.any?
-#   puts "Must supply at least one file to place"
-#   puts
-#   puts option_parser
-#   exit 1
-# end
-# 
-# puts "Will try to place these files:"
-# puts files_to_place.map { |name| "- #{name}"}.join "\n"
+if ! files_to_place.any?
+  puts "Must supply at least one file to place"
+  puts
+  puts option_parser
+  exit 1
+end
 
-searcher = Place::Searcher.new placement_dir
-searcher.search_in
+with_alternate_buffer do
+  searcher = Place::Searcher.search placement_dir
+  unless searcher.current_dir
+    puts "no directory selected, abort."
+    exit 1
+  end
+end
+
+files_to_place.first
