@@ -2,10 +2,10 @@ module Place
   class NameChooser < Interface::Base
     getter selected : Int32
     getter slugs
+    getter extension
 
-    def initialize(@slugs : Array(String))
-      @selected = 0
-
+    def initialize(@slugs : Array(String), @extension : String)
+      @selected = slugs.size - 1
       hide_cursor
     end
 
@@ -24,7 +24,9 @@ module Place
         end
       end.join " - "
 
-      puts display_slugs
+      print display_slugs
+      print " . "
+      print extension
       puts
 
       puts "</>     select segment"
@@ -126,6 +128,14 @@ module Place
       slug = slugs.delete_at selected
       @selected -= 1
       slugs.insert selected, slug
+    end
+
+    def key_enter
+      self.finished = true
+    end
+
+    def return_value
+      "#{slugs.join(" - ")}.#{extension}"
     end
   end
 end

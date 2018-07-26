@@ -58,6 +58,7 @@ module Place::Interface
       when :down_arrow  then key_down_arrow
       when :left_arrow  then key_left_arrow
       when :right_arrow then key_right_arrow
+      when :esc         then key_escape
       else
         puts "unknown function key: #{keystroke}"
       end

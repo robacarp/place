@@ -34,10 +34,17 @@ module Place
       super
     end
 
+    # save the edit
     def key_enter
       if input_text.size > 0
         self.finished = true
       end
+    end
+
+    # discard the edit
+    def key_escape
+      set_input_text slugs[selected]
+      self.finished = true
     end
   end
 end

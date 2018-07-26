@@ -49,15 +49,40 @@ if ! files_to_place.any?
   exit 1
 end
 
+if files_to_place.size > 1
+  puts "Can only tolerate placing one file at a time"
+  puts
+  puts option_parser
+  exit 1
+end
+
+file_to_place = File.join(Dir.current, files_to_place.first)
+filename = File.basename files_to_place.first
+filename, extension = filename.split('.')
+searcher = Place::Searcher.new placement_dir
+name_chooser = nil
+new_name = ""
 
 with_alternate_buffer do
-  #Place::NameChooser.new(["one","two","three"]).run
-  searcher = Place::Searcher.search placement_dir
+  searcher.search
+
   unless searcher.current_dir
     puts "no directory selected, abort."
     exit 1
   end
 end
 
-files_to_place.first
+puts "Final directory: #{searcher.current_dir.path}"
+
+with_alternate_buffer do
+  name_parts = searcher.current_dir.path.split('/').compact.reject(&.blank?)
+
+  dismissable_slugs = placement_dir.split('/').size - 1
+  name_parts.shift dismissable_slugs
+  name_parts.push filename
+
+  new_name = Place::NameChooser.new(name_parts, extension).run
+end
+
+puts "Final name: #{new_name}"
 
