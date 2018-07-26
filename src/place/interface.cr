@@ -22,6 +22,7 @@ module Place::Interface
 
       loop do
         clear
+        before_display
         display
         wait_for_input
         break if finished
@@ -32,6 +33,7 @@ module Place::Interface
       return_value
     end
 
+    def before_display; end
     def cleanup; end
     def return_value; end
 
@@ -77,12 +79,10 @@ module Place::Interface
 
     def key_pressed(keystroke : Keystroke)
       case keystroke.type
-      when :alphanumeric
-        character_key keystroke
-      when :whitespace
-        character_key keystroke
       when :function
         function_key keystroke
+      else
+        character_key keystroke
       end
     end
 

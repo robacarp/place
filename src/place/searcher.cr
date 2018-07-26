@@ -21,7 +21,10 @@ module Place
           File.info( File.join @current_dir.path, path ).directory?
         end
 
-      choice = Menu.new("Searching in #{@current_dir.path}...", descendants.sort).choose
+      menu = Menu.new("Searching in #{@current_dir.path}...", descendants.sort)
+      choice = menu.run
+
+      puts "found choice: #{choice}"
 
       if choice
         @current_dir = Dir.new(File.join @current_dir.path, choice)

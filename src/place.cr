@@ -51,7 +51,7 @@ end
 
 
 with_alternate_buffer do
-  Place::NameChooser.new(["one","two","three"]).run
+  #Place::NameChooser.new(["one","two","three"]).run
   searcher = Place::Searcher.search placement_dir
   unless searcher.current_dir
     puts "no directory selected, abort."
