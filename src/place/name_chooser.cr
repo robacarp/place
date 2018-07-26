@@ -14,7 +14,7 @@ module Place
     end
 
     def display
-      puts "Modify the name of the file:"
+      puts "Modify the name of the file (#{selected}):"
 
       display_slugs = slugs.map_with_index do |slug, i|
         if selected == i
@@ -28,25 +28,21 @@ module Place
       puts
 
       puts "</>     select segment"
-      puts "i       insert segment"
+      puts "e       edit segment"
+      puts "i/a     insert/append segment"
       puts "DEL     remove segment"
       puts "^p      move segment up one"
       puts "^n      move segment down one"
     end
 
-    def editing_display
-      display_slugs = slugs.map_with_index do |slug, i|
-        if selected == i
-          slug.colorize(:black).on(:green)
-        else
-          slug
-        end
-      end.join " - "
+    def constrain_selection
+      if selected >= slugs.size
+        @selected = slugs.size - 1
+      end
 
-      puts display_slugs
-      puts
-
-      print "#{input_text}"
+      if selected < 0
+        @selected = 0
+      end
     end
 
     def key_right_arrow
@@ -88,23 +84,32 @@ module Place
       hide_cursor
     end
 
-    def key_enter
-      launch_editor
-    end
-
     def key_delete
+      return if slugs.empty?
       slugs.delete_at selected
+      constrain_selection
     end
 
     def character_key(keystroke)
       case keystroke.data
       when 'i'
         insert_segment
+      when 'a'
+        append_segment
+      when 'e'
+        launch_editor
       end
     end
 
     def insert_segment
       slugs.insert selected, ""
+      launch_editor
+      constrain_selection
+    end
+
+    def append_segment
+      slugs.insert(selected + 1, "")
+      @selected += 1
       launch_editor
     end
 
