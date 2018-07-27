@@ -1,5 +1,8 @@
-module Place
-  class Menu < Interface::Base
+require "./menu/*"
+require "./text_input"
+
+module Interface
+  class Menu < Base
     include Interface::TextInput
 
     getter heading
@@ -41,7 +44,6 @@ module Place
     end
 
     def display
-      print RESTORE
       puts heading
       puts formatted_options
       print "Choose: "
@@ -69,13 +71,8 @@ module Place
       end
     end
 
-    def key_esc
-      if input_text.empty?
-        @choice = nil
-        self.finished = true
-      else
-        set_input_text ""
-      end
+    def key_escape
+      set_input_text ""
     end
   end
 end

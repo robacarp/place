@@ -82,7 +82,7 @@ module Place
     def launch_editor
       clear
       show_cursor
-      slugs[selected] = SlugEditor.new(slugs, selected).run
+      slugs[selected] = NameEditor.new(slugs, selected).run
       hide_cursor
     end
 

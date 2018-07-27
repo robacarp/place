@@ -1,4 +1,4 @@
-module Place
+module Interface
   # macos defaults TERM=xterm-256, and my best guess is that this is
   # based off of "XFree86 xterm."
   #

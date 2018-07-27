@@ -1,4 +1,4 @@
-module Place::Interface::TextInput
+module Interface::TextInput
   getter text_buffer = [] of Char
   getter input_text = ""
 

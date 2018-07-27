@@ -1,9 +1,10 @@
-require "./global"
+require "./ext/*"
 
 require "colorize"
 require "option_parser"
 
-require "./place/*"
+require "./interface"
+require "./place/**"
 
 placement_dir = "/Users/robert/Box Sync/Files"
 files_to_place = [] of String
@@ -59,12 +60,12 @@ end
 file_to_place = File.join(Dir.current, files_to_place.first)
 filename = File.basename files_to_place.first
 filename, extension = filename.split('.')
-searcher = Place::Searcher.new placement_dir
+searcher = Place::DirectoryNavigator.new placement_dir
 name_chooser = nil
 new_name = ""
 
 with_alternate_buffer do
-  searcher.search
+  searcher.run
 
   unless searcher.current_dir
     puts "no directory selected, abort."

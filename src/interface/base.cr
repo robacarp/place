@@ -1,6 +1,4 @@
-require "./interface/**"
-
-module Place::Interface
+module Interface
   abstract class Base
     record Keystroke, type : Symbol, value : Symbol, data : Char
 
@@ -33,6 +31,7 @@ module Place::Interface
       return_value
     end
 
+    abstract def display
     def before_display; end
     def cleanup; end
     def return_value; end
@@ -42,35 +41,39 @@ module Place::Interface
       print CLEAR_DOWN
     end
 
-    abstract def display
-
     def character_key(keystroke); end
 
-    def function_key(keystroke)
-      case keystroke.value
-      when :backspace   then key_backspace
-      when :ctrl_c      then key_ctrl_c
-      when :ctrl_n      then key_ctrl_n
-      when :ctrl_p      then key_ctrl_p
-      when :delete      then key_delete
-      when :enter       then key_enter
-      when :up_arrow    then key_up_arrow
-      when :down_arrow  then key_down_arrow
-      when :left_arrow  then key_left_arrow
-      when :right_arrow then key_right_arrow
-      when :esc         then key_escape
-      else
-        puts "unknown function key: #{keystroke}"
-      end
-    end
+    {% begin %}
+    {%
+     special_keys = [
+       :backspace,
+       :ctrl_c,
+       :ctrl_n,
+       :ctrl_p,
+       :delete,
+       :enter,
+       :up_arrow,
+       :down_arrow,
+       :left_arrow,
+       :right_arrow,
+       :esc
+     ]
+    %}
 
-    macro method_missing(call)
-      {% if call.name.id.stringify.starts_with? "key_" %}
-        # do nothing
-      {% else %}
-        raise "(missing macro) No Method Defined: {{call.name.id}}"
+      def function_key(keystroke)
+        case keystroke.value
+        {% for key_name in special_keys %}
+        when {{ key_name }} then key_{{ key_name.id }}
+        {% end %}
+        else
+          puts "unknown function key: #{keystroke}"
+        end
+      end
+
+      {% for key_name in special_keys %}
+        def key_{{ key_name.id }}; end
       {% end %}
-    end
+    {% end %}
 
     def key_ctrl_c
       cleanup
@@ -88,7 +91,7 @@ module Place::Interface
     end
 
     def wait_for_input
-      State.with_tty_raw do
+      STDIN.raw do
         @read_buffer = Bytes.new BUFFER_SIZE
         count = STDIN.read @read_buffer
 
@@ -159,6 +162,10 @@ module Place::Interface
 
     def hide_cursor
       print HIDE_CURSOR
+    end
+
+    def finished?
+      finished
     end
   end
 end

@@ -1,15 +1,9 @@
-require "./place/state"
-
 CRLF = "\n\r"
 
 def puts(thing) : Nil
-  if true#Place::State.tty_raw?
-    STDOUT.print thing
-    STDOUT.print CRLF
-    STDOUT.flush
-  else
-    STDOUT.puts thing
-  end
+  STDOUT.print thing
+  STDOUT.print CRLF
+  STDOUT.flush
 end
 
 def puts() : Nil

@@ -1,5 +1,5 @@
 module Place
-  class SlugEditor < Interface::Base
+  class NameEditor < Interface::Base
     include Interface::TextInput
 
     getter slugs

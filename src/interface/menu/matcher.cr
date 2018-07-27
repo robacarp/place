@@ -1,4 +1,4 @@
-module Place
+module Interface
   class Matcher
     def self.search(haystack : String)
       new haystack
