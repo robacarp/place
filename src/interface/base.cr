@@ -44,21 +44,22 @@ module Interface
     def character_key(keystroke); end
 
     {% begin %}
-    {%
-     special_keys = [
-       :backspace,
-       :ctrl_c,
-       :ctrl_n,
-       :ctrl_p,
-       :delete,
-       :enter,
-       :up_arrow,
-       :down_arrow,
-       :left_arrow,
-       :right_arrow,
-       :esc
-     ]
-    %}
+      {%
+       special_keys = [
+         :backspace,
+         :ctrl_c,
+         :ctrl_n,
+         :ctrl_o,
+         :ctrl_p,
+         :delete,
+         :enter,
+         :up_arrow,
+         :down_arrow,
+         :left_arrow,
+         :right_arrow,
+         :esc
+       ]
+      %}
 
       def function_key(keystroke)
         case keystroke.value
@@ -138,13 +139,14 @@ module Interface
       when 12 then :ctrl_l
       when 13 then :enter
       when 14 then :ctrl_n
+      when 15 then :ctrl_o
       when 16 then :ctrl_p
       when 23 then :ctrl_w
       when 26 then :ctrl_z
       when 27 then :esc
       when 127 then :backspace
       else
-        puts "unknown control character: #{puts read_buffer.first}"
+        puts "unknown control character: #{read_buffer.first}"
         :unknown_control
       end
 

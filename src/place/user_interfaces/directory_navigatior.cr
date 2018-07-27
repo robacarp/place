@@ -28,6 +28,7 @@ module Place
       if finished? && (choice_ = choice)
         switch_directory choice_
         self.finished = false
+        self.cursor_position = -1
       end
     end
 
@@ -46,8 +47,23 @@ module Place
       puts formatted_options
       puts "------------------"
       puts "ESC		Clear filter"
+
+      if cursor_active?
+        puts "ENTER		Navigate to directory".colorize.bold
+      else
+        case matches.size
+        when 0
+          puts "ENTER		Select current directory"
+        when 1
+          puts "ENTER		Navigate to directory".colorize.bold
+        else
+          puts "ENTER		Navigate to directory".colorize.dim
+        end
+      end
+
       puts "^p		Navigate up (..)"
       puts "^n		Create Directory"
+      puts "^o		Open Directory in Finder"
       puts "------------------"
       print "Filter: "
       print input_text
@@ -61,9 +77,21 @@ module Place
 
     def key_ctrl_n
       clear
-      new_directory = Interface::Prompt.new(
+      new_directory_name = Interface::Prompt.new(
         "Create new directory in #{@current_dir.path}:"
       ).run
+
+      return if new_directory_name.size == 0
+      return if new_directory_name == "."
+      return if new_directory_name == ".."
+
+      Dir.mkdir( File.join @current_dir.path, new_directory_name )
+
+      switch_directory new_directory_name
+    end
+
+    def key_ctrl_o
+      `/usr/bin/open '#{@current_dir.path}'`
     end
   end
 end

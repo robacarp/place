@@ -2,9 +2,9 @@ module Interface
   class Prompt < Base
     include Interface::TextInput
 
-    getter question
+    getter question, character_filter
 
-    def initialize(@question : String)
+    def initialize(@question : String, @character_filter = /[A-Za-z0-9._!?@#$%^&*()-]/)
     end
 
     def display
@@ -15,17 +15,17 @@ module Interface
       self.finished = true
     end
 
+    def key_escape
+      set_input_text ""
+      self.finished = true
+    end
+
     def return_value
       input_text
     end
 
     def character_key(keystroke) : Nil
-      case keystroke.data
-      when .alphanumeric?
-        super
-      when ' '
-        super
-      when '.'
+      if keystroke.data.to_s.match character_filter
         super
       end
     end
