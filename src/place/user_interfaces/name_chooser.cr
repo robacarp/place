@@ -29,7 +29,7 @@ module Place
       print extension
       puts
 
-      puts "</>     select segment"
+      puts "←/→     select segment"
       puts "e       edit segment"
       puts "i/a     insert/append segment"
       puts "DEL     remove segment"

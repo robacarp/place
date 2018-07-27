@@ -65,11 +65,8 @@ module Interface
     end
 
     def return_value
-      if matches.size == 1
-        matches.first
-      else
-        nil
-      end
+      return options[cursor_position] if cursor_active?
+      return matches.first if matches.size == 1
     end
 
     def character_key(keystroke) : Nil
@@ -91,6 +88,14 @@ module Interface
       end
     end
 
+    def key_escape
+      self.cursor_position = -1
+      set_input_text ""
+    end
+
+
+    # methods for dealing with the cursor
+
     def cursor_active?
       cursor_position > -1
     end
@@ -111,6 +116,7 @@ module Interface
 
     def key_up_arrow
       return if matches.size == 1
+      return if options.size < 1
 
       decrement_cursor
       return if matches.empty?
@@ -123,6 +129,7 @@ module Interface
 
     def key_down_arrow
       return if matches.size == 1
+      return if options.size < 1
 
       increment_cursor
       return if matches.empty?
@@ -131,10 +138,6 @@ module Interface
         break if match? options[cursor_position]
         increment_cursor
       end
-    end
-
-    def key_escape
-      set_input_text ""
     end
   end
 end

@@ -46,18 +46,39 @@ module Interface
     {% begin %}
       {%
        special_keys = [
-         :backspace,
+         :ctrl_a,
+         :ctrl_b,
          :ctrl_c,
+         :ctrl_d,
+         :ctrl_e,
+         :ctrl_f,
+         :ctrl_g,
+         :ctrl_h,
+         :ctrl_i,
+         :ctrl_j,
+         :ctrl_k,
+         :ctrl_l,
+         :enter,
          :ctrl_n,
          :ctrl_o,
          :ctrl_p,
+         :ctrl_q,
+         :ctrl_r,
+         :ctrl_s,
+         :ctrl_t,
+         :ctrl_u,
+         :ctrl_v,
+         :ctrl_w,
+         :ctrl_x,
+         :ctrl_y,
+         :ctrl_z,
+         :backspace,
          :delete,
-         :enter,
          :up_arrow,
          :down_arrow,
          :left_arrow,
          :right_arrow,
-         :esc
+         :escape
        ]
       %}
 
@@ -97,7 +118,9 @@ module Interface
         count = STDIN.read @read_buffer
 
         # puts "read #{count} bytes at once: #{@read_buffer} #{@read_buffer.map{|c| c.chr}.join("").lstrip('\e').rstrip('\u{0}')}"
-
+        # puts
+        # puts "read: #{@read_buffer.inspect}"
+        # puts
         keystroke = nil
 
         if count == 0
@@ -134,16 +157,30 @@ module Interface
       when 1 then :ctrl_a
       when 2 then :ctrl_b
       when 3 then :ctrl_c
+      when 4 then :ctrl_d
       when 5 then :ctrl_e
       when 6 then :ctrl_f
+      when 7 then :ctrl_g
+      when 8 then :ctrl_h
+      when 9 then :ctrl_i
+      when 10 then :ctrl_j
+      when 11 then :ctrl_k
       when 12 then :ctrl_l
       when 13 then :enter
       when 14 then :ctrl_n
       when 15 then :ctrl_o
       when 16 then :ctrl_p
+      when 17 then :ctrl_q
+      when 18 then :ctrl_r
+      when 19 then :ctrl_s
+      when 20 then :ctrl_t
+      when 21 then :ctrl_u
+      when 22 then :ctrl_v
       when 23 then :ctrl_w
+      when 24 then :ctrl_x
+      when 25 then :ctrl_y
       when 26 then :ctrl_z
-      when 27 then :esc
+      when 27 then :escape
       when 127 then :backspace
       else
         puts "unknown control character: #{read_buffer.first}"

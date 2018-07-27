@@ -5,8 +5,8 @@ authors:
   - Robert L Carpenter <robert@robacarp.com>
 
 targets:
-  .:
-    main: src/..cr
+  place:
+    main: src/place.cr
 
 crystal: 0.25.1
 

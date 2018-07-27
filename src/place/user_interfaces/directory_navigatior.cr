@@ -15,6 +15,10 @@ module Place
       repopulate_options
     end
 
+    def return_value
+      @current_dir.path
+    end
+
     def repopulate_options : Array(String)
       @options = @current_dir.children.select do |path|
         File.info(File.join @current_dir.path, path).directory?
@@ -46,24 +50,29 @@ module Place
       puts "Searching in #{@current_dir.path} :"
       puts formatted_options
       puts "------------------"
-      puts "ESC		Clear filter"
 
       if cursor_active?
         puts "ENTER		Navigate to directory".colorize.bold
       else
-        case matches.size
-        when 0
-          puts "ENTER		Select current directory"
-        when 1
+        if matches.size == 1
           puts "ENTER		Navigate to directory".colorize.bold
         else
           puts "ENTER		Navigate to directory".colorize.dim
         end
       end
 
+      if cursor_active? || matches.size == 1
+        puts "^d		Place file in selected directory"
+      else
+        puts "^d		Place file in this directory"
+      end
+
+      puts
+      puts "ESC		Clear filter"
       puts "^p		Navigate up (..)"
       puts "^n		Create Directory"
       puts "^o		Open Directory in Finder"
+      puts "↑ / ↓		Manually select Directory"
       puts "------------------"
       print "Filter: "
       print input_text
@@ -92,6 +101,18 @@ module Place
 
     def key_ctrl_o
       `/usr/bin/open '#{@current_dir.path}'`
+    end
+
+    def key_ctrl_d
+      return if ! cursor_active? && matches.size >= 1
+
+      if cursor_active?
+        switch_directory options[cursor_position]
+      elsif matches.size == 1
+        switch_directory matches.first
+      end
+
+      self.finished = true
     end
   end
 end
