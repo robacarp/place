@@ -33,14 +33,8 @@ module Interface
       "[3~"  => :delete
     }
 
-    def self.decode_bytes(bytes : Bytes)
-      string = bytes
-        .map(&.chr)
-        .join("")
-        .lstrip('\e')
-        .rstrip('\u{0}')
-
-      if resolved = MAPPING[string]?
+    def self.decode_bytes(read_string : String)
+      if resolved = MAPPING[read_string.lstrip('\e')]?
         resolved
       else
         :unknown_function

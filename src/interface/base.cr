@@ -13,6 +13,7 @@ module Interface
     BUFFER_SIZE = 6
 
     getter read_buffer = Bytes.new BUFFER_SIZE
+    getter read_string = ""
     private property finished = false
 
     def run
@@ -42,7 +43,6 @@ module Interface
       print CLEAR_DOWN
     end
 
-    def character_key(keystroke); end
 
     {% begin %}
       {%
@@ -82,6 +82,8 @@ module Interface
          :escape
        ]
       %}
+
+      def character_key(keystroke); end
 
       def function_key(keystroke)
         case keystroke.value
@@ -123,10 +125,11 @@ module Interface
         # puts "read: #{@read_buffer.inspect}"
         # puts
         keystroke = nil
+        return if count == 0
 
-        if count == 0
-          return
-        elsif count == 1
+        @read_string = @read_buffer.map(&.chr).join("").rstrip('\u{0}')
+
+        if count == 1
           keystroke = process_input_char
         else
           keystroke = decode_function_character
@@ -192,7 +195,7 @@ module Interface
     end
 
     def decode_function_character : Keystroke
-      key = FunctionKeys.decode_bytes read_buffer
+      key = FunctionKeys.decode_bytes read_string
       Keystroke.new type: :function, value: key, data: '\0'
     end
 
