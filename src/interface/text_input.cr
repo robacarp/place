@@ -20,4 +20,8 @@ module Interface::TextInput
     text_buffer << keystroke.data
     build_input_text
   end
+
+  def show_input
+    print input_text
+  end
 end

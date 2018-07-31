@@ -2,10 +2,11 @@ module Interface
   abstract class Base
     record Keystroke, type : Symbol, value : Symbol, data : Char
 
-    SAVE = "\x1b7"
-    RESTORE = "\x1b8"
+    SAVE_CURSOR = "\x1b7"
+    RESTORE_CURSOR = "\x1b8"
     CLEAR_DOWN = "\x1b[J"
     CLEAR_SCREEN = "\x1b[2J"
+    CLEAR_LINE = "\x1b[K"
 
     SHOW_CURSOR = "\x1b[?25h"
     HIDE_CURSOR = "\x1b[?25l"
@@ -14,35 +15,73 @@ module Interface
 
     getter read_buffer = Bytes.new BUFFER_SIZE
     getter read_string = ""
+    property full_screen = false
+
     private property finished = false
 
     def run
-      print SAVE
+      if full_screen
 
-      loop do
-        clear
-        before_display
+        with_alternate_buffer do
+          print SAVE_CURSOR
+          display_loop
+        end
+
+        clear_screen
+      else
         display
-        wait_for_input
-
-        break if finished?
+        print SAVE_CURSOR
+        input_display_loop
       end
 
-      clear
       cleanup
       return_value
     end
 
-    abstract def display
+    def display_loop
+      loop do
+        clear_screen
+        before_display
+        display
+
+        wait_for_input
+
+        break if finished?
+      end
+    end
+
+    def input_display_loop
+      loop do
+        clear_line
+        show_input
+        wait_for_input
+        break if finished?
+      end
+    end
+
+    def display; end
     def before_display; end
     def cleanup; end
     def return_value; end
+    def show_input; end
 
     def clear
-      print RESTORE
+      if full_screen?
+        clear_screen
+      else
+        clear_line
+      end
+    end
+
+    def clear_screen
+      print RESTORE_CURSOR
       print CLEAR_DOWN
     end
 
+    def clear_line
+      print RESTORE_CURSOR
+      print CLEAR_LINE
+    end
 
     {% begin %}
       {%
@@ -215,5 +254,8 @@ module Interface
       self.finished = true
     end
 
+    def full_screen?
+      full_screen
+    end
   end
 end
