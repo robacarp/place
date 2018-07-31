@@ -12,12 +12,12 @@ module Interface
     end
 
     def key_enter
-      self.finished = true
+      finish!
     end
 
     def key_escape
       set_input_text ""
-      self.finished = true
+      finish!
     end
 
     def return_value

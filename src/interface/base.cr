@@ -23,7 +23,8 @@ module Interface
         before_display
         display
         wait_for_input
-        break if finished
+
+        break if finished?
       end
 
       clear
@@ -206,5 +207,10 @@ module Interface
     def finished?
       finished
     end
+
+    def finish!
+      self.finished = true
+    end
+
   end
 end

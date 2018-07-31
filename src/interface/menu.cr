@@ -76,13 +76,13 @@ module Interface
 
     def key_enter
       if cursor_active?
-        self.finished = true
+        finish!
         @choice = options[cursor_position]
       else
         case matches.size
         when .>(1)
         when .==(1)
-          self.finished = true
+          finish!
           @choice = matches.first
         end
       end
