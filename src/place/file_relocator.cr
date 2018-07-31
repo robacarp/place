@@ -23,16 +23,31 @@ class Place::FileRelocator
   end
 
   def summarize
-    puts "Would move #{file_path} to #{destination_directory}"
-    puts "and rename to #{final_name}"
+    summary = <<-TEXT
+    Relocator and renamer will:
+
+     - move #{file_path} to #{destination_directory}
+     - rename to #{final_name}
+
+    Continue? [Ny] :
+    TEXT
+
+    prompt = Interface::Prompt.new(summary)
+    answer = prompt.run
+
+    case answer
+    when "y", "Y", "yes"
+      puts "execute"
+    else
+      puts "ABORT"
+    end
+  end
   end
 
   def navigate_directory
     directory_searcher = DirectoryNavigator.new base_directory
-
-    with_alternate_buffer do
-      directory_searcher.run
-    end
+    directory_searcher.full_screen = true
+    directory_searcher.run
 
     if directory_searcher.current_dir.nil?
       STDERR.puts "no directory selected, abort."
@@ -49,10 +64,8 @@ class Place::FileRelocator
 
   def inspect_filename
     name_slugs.push filename
-    name_editor = NameChooser.new name_slugs, extension
-
-    with_alternate_buffer do
-      @final_name = name_editor.run
-    end
+    name_editor = NameChooser.new name_slugs, filename, extension
+    name_editor.full_screen = true
+    @final_name = name_editor.run
   end
 end

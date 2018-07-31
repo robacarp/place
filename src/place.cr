@@ -2,6 +2,7 @@ require "./ext/*"
 
 require "colorize"
 require "option_parser"
+require "file_utils"
 
 require "./interface"
 require "./place/**"
