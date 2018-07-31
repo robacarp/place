@@ -37,11 +37,15 @@ class Place::FileRelocator
 
     case answer
     when "y", "Y", "yes"
-      puts "execute"
+      execute
     else
       puts "ABORT"
     end
   end
+
+  def execute
+    new_path = File.join(destination_directory, final_name)
+    FileUtils.mv file_path, new_path
   end
 
   def navigate_directory
