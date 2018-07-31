@@ -1,10 +1,11 @@
 module Place
   class NameChooser < Interface::Base
     getter selected : Int32
-    getter slugs
-    getter extension
+    getter slugs, filename, extension
+    getter suggested_name_slugs
 
-    def initialize(@slugs : Array(String), @extension : String)
+    def initialize(@suggested_name_slugs : Array(String), @filename : String, @extension : String)
+      @slugs = @suggested_name_slugs
       @selected = slugs.size - 1
       hide_cursor
     end
@@ -14,7 +15,8 @@ module Place
     end
 
     def display
-      puts "Modify the name of the file (#{selected}):"
+      puts "Based off of the chosen directory, a name is being suggested."
+      puts "If you wish, you may edit the filename or press ^d to finish and move the file."
 
       display_slugs = slugs.map_with_index do |slug, i|
         if selected == i
@@ -26,15 +28,23 @@ module Place
 
       print display_slugs
       print " . "
-      print extension
+      puts extension
+      puts
+      puts "------------------"
+      puts "^d		Finish editing and move file".colorize.bold
       puts
 
-      puts "←/→     select segment"
-      puts "e       edit segment"
-      puts "i/a     insert/append segment"
-      puts "DEL     remove segment"
-      puts "^p      move segment up one"
-      puts "^n      move segment down one"
+      puts "←/→,h/l		select segment"
+      puts "c		change (edit) segment"
+      puts
+      puts "^r		revert entire name to original"
+      puts "^s		revert to initial suggestion"
+      puts
+      puts "DEL		remove segment"
+      puts "i/a		insert/append segment"
+      puts "^p		move segment up one"
+      puts "^n		move segment down one"
+      puts "------------------"
     end
 
     def constrain_selection
@@ -98,8 +108,12 @@ module Place
         insert_segment
       when 'a'
         append_segment
-      when 'e'
+      when 'c'
         launch_editor
+      when 'h'
+        key_left_arrow
+      when 'l'
+        key_right_arrow
       end
     end
 
@@ -113,6 +127,10 @@ module Place
       slugs.insert(selected + 1, "")
       @selected += 1
       launch_editor
+    end
+
+    def key_ctrl_d
+      self.finished = true
     end
 
     def key_ctrl_n
@@ -130,8 +148,14 @@ module Place
       slugs.insert selected, slug
     end
 
-    def key_enter
-      self.finished = true
+    def key_ctrl_r
+      @slugs = [ filename ]
+      constrain_selection
+    end
+
+    def key_ctrl_s
+      @slugs = @suggested_name_slugs.dup
+      constrain_selection
     end
 
     def return_value

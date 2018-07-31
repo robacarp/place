@@ -47,8 +47,11 @@ module Place
     end
 
     def display
+      puts "Select a destination folder for the file."
+      puts
       puts "Searching in #{@current_dir.path} :"
       puts formatted_options
+      puts
       puts "------------------"
 
       if cursor_active?
