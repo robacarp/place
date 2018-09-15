@@ -19,7 +19,14 @@ class Place::FileRelocator
   end
 
   def initialize(@file_path, @base_directory)
-    @filename, @extension = File.basename(@file_path).split('.', 2)
+    @filename, @extension = File.basename(file_path).split('.', 2)
+
+    # Resolve relative and absolute pathing to the full absolute path
+    if File.basename(file_path) == file_path
+      @file_path = File.join Dir.current, file_path
+    else
+      @file_path = File.real_path file_path
+    end
   end
 
   def summarize
@@ -38,6 +45,7 @@ class Place::FileRelocator
     case answer
     when "y", "Y", "yes"
       execute
+      puts "Complete."
     else
       puts "ABORT"
     end
@@ -50,6 +58,7 @@ class Place::FileRelocator
 
   def navigate_directory
     directory_searcher = DirectoryNavigator.new base_directory
+    directory_searcher.file_to_place = file_path
     directory_searcher.full_screen = true
     directory_searcher.run
 
@@ -68,7 +77,7 @@ class Place::FileRelocator
 
   def inspect_filename
     name_slugs.push filename
-    name_editor = NameChooser.new name_slugs, filename, extension
+    name_editor = NameChooser.new name_slugs, file_path, filename, extension
     name_editor.full_screen = true
     @final_name = name_editor.run
   end

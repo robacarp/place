@@ -1,10 +1,10 @@
 module Place
   class NameChooser < Interface::Base
     getter selected : Int32
-    getter slugs, filename, extension
+    getter slugs, path, filename, extension
     getter suggested_name_slugs
 
-    def initialize(@suggested_name_slugs : Array(String), @filename : String, @extension : String)
+    def initialize(@suggested_name_slugs : Array(String), @path : String, @filename : String, @extension : String)
       @slugs = @suggested_name_slugs
       @selected = slugs.size - 1
       hide_cursor
@@ -92,8 +92,15 @@ module Place
     def launch_editor
       clear
       show_cursor
-      slugs[selected] = NameEditor.new(slugs, selected).run
+      slugs[selected] = NameEditor.new(slugs, selected, filename).run
       hide_cursor
+    end
+
+    def launch_quicklook
+      Process.new(
+        command : String,
+        args = nil
+      )
     end
 
     def key_delete

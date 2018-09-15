@@ -1,6 +1,9 @@
 module Place
   class DirectoryNavigator < Interface::Menu
+    RULE = "------------------------------------"
+
     getter current_dir
+    property file_to_place : String? = nil
 
     def self.search(dir)
       new(dir).tap {|s| s.search}
@@ -52,7 +55,7 @@ module Place
       puts "Searching in #{@current_dir.path} :"
       puts formatted_options
       puts
-      puts "------------------"
+      puts RULE
 
       if cursor_active?
         puts "ENTER		Navigate to directory".colorize.bold
@@ -65,18 +68,25 @@ module Place
       end
 
       if cursor_active? || matches.size == 1
-        puts "^d		Place file in selected directory"
+        selected = "selected".colorize.bold
+        puts "^d		Place file in #{selected} directory"
       else
         puts "^d		Place file in this directory"
       end
 
-      puts
       puts "ESC		Clear filter"
+
+      if file_to_place
+        puts RULE
+        puts "^q		Quick Look File"
+        puts "^o		Open File"
+        puts RULE
+      end
+
       puts "^p		Navigate up (..)"
       puts "^n		Create Directory"
-      puts "^o		Open Directory in Finder"
       puts "↑ / ↓		Manually select Directory"
-      puts "------------------"
+      puts RULE
       print "Filter: "
       print input_text
     end
@@ -103,7 +113,9 @@ module Place
     end
 
     def key_ctrl_o
-      `/usr/bin/open '#{@current_dir.path}'`
+      if file = @file_to_place
+        Process.run "/usr/bin/open", [file]
+      end
     end
 
     def key_ctrl_d
@@ -116,6 +128,19 @@ module Place
       end
 
       self.finished = true
+    end
+
+    def key_ctrl_q
+      if file = @file_to_place
+        args = ["-p"]
+        args << file
+
+        spawn do
+          Process.run "qlmanage", args
+        end
+
+        repaint
+      end
     end
   end
 end

@@ -2,10 +2,9 @@ module Place
   class NameEditor < Interface::Base
     include Interface::TextInput
 
-    getter slugs
-    getter selected
+    getter slugs, selected, file
 
-    def initialize(@slugs : Array(String), @selected : Int32)
+    def initialize(@slugs : Array(String), @selected : Int32, @file : String)
       set_input_text slugs[selected]
     end
 

@@ -38,12 +38,15 @@ module Interface
       return_value
     end
 
+    def repaint
+      clear_screen
+      before_display
+      display
+    end
+
     def display_loop
       loop do
-        clear_screen
-        before_display
-        display
-
+        repaint
         wait_for_input
 
         break if finished?
