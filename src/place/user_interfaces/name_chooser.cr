@@ -5,7 +5,8 @@ module Place
     getter suggested_name_slugs
 
     def initialize(@suggested_name_slugs : Array(String), @path : String, @filename : String, @extension : String)
-      @slugs = @suggested_name_slugs
+      @slugs = [] of String
+      @slugs = @suggested_name_slugs.dup
       @selected = slugs.size - 1
       hide_cursor
     end
@@ -27,7 +28,7 @@ module Place
       end.join " - "
 
       print display_slugs
-      print " . "
+      print "."
       puts extension
       puts
       puts "------------------"

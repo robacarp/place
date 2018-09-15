@@ -9,20 +9,23 @@ module Place
     end
 
     def display
-      puts "Modify the name of the file:"
+      puts "Modify a segment of the filename:"
 
       display_slugs = slugs.map_with_index do |slug, i|
+        text = slug
+        text = "<>" if text == ""
+
         if selected == i
-          slug.colorize(:black).on(:green)
+          text.colorize(:black).on(:green)
         else
-          slug
+          text
         end
       end.join " - "
 
       puts display_slugs
       puts
 
-      print "#{input_text}"
+      print "Segment: "
     end
 
     def return_value
