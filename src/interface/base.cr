@@ -11,7 +11,10 @@ module Interface
     SHOW_CURSOR = "\x1b[?25h"
     HIDE_CURSOR = "\x1b[?25l"
 
-    BUFFER_SIZE = 6
+    LOCATE_CURSOR = "\x1b[6n"
+    MOVE_CURSOR = "\x1b["
+
+    BUFFER_SIZE = 12
 
     getter read_buffer = Bytes.new BUFFER_SIZE
     getter read_string = ""
@@ -247,6 +250,41 @@ module Interface
 
     def hide_cursor
       print HIDE_CURSOR
+    end
+
+    def request_cursor_position
+      print LOCATE_CURSOR
+
+      row = 0
+      col = 0
+
+      STDIN.raw do
+        @read_buffer = Bytes.new BUFFER_SIZE
+        count = STDIN.read @read_buffer
+        status = @read_buffer.map(&.chr).join("").lstrip('\e').rstrip('\u{0}')
+
+        if data = /^\[(\d+);(\d+)R$/.match(status)
+          row = data[1].to_i
+          col = data[2].to_i
+        end
+      end
+
+      { row, col }
+    end
+
+    def set_cursor_position(row = 1, col = 1)
+      print MOVE_CURSOR
+      print row
+      print ';'
+      print col
+      print 'H'
+    end
+
+    def maintain_saved_cursor
+      row, col = request_cursor_position
+      yield
+      set_cursor_position row, col
+      print SAVE_CURSOR
     end
 
     def finished?

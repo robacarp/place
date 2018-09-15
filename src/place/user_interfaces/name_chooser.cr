@@ -85,15 +85,17 @@ module Place
       key_left_arrow
     end
 
-    def clear
-      super
-    end
-
     def launch_editor
       clear
       show_cursor
-      slugs[selected] = NameEditor.new(slugs, selected, filename).run
+
+      maintain_saved_cursor do
+        name_editor = NameEditor.new(slugs, selected, filename)
+        slugs[selected] = name_editor.run
+      end
+
       hide_cursor
+      clear
     end
 
     def launch_quicklook
