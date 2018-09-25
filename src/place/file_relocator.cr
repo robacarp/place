@@ -13,6 +13,7 @@ class Place::FileRelocator
       new(options.files_to_place.first, options.placement_dir).tap do |relocator|
         relocator.navigate_directory
         relocator.inspect_filename
+        relocator.check_for_duplicates
         relocator.summarize
       end
     end
@@ -29,32 +30,6 @@ class Place::FileRelocator
     end
   end
 
-  def summarize
-    summary = <<-TEXT
-    Relocator and renamer will:
-
-     - move #{file_path} to #{destination_directory}
-     - rename to #{final_name}
-
-    Continue? [Ny] :
-    TEXT
-
-    prompt = Keimeno::Prompt.new(summary)
-    answer = prompt.run
-
-    case answer
-    when "y", "Y", "yes"
-      execute
-      puts "Complete."
-    else
-      puts "ABORT"
-    end
-  end
-
-  def execute
-    new_path = File.join(destination_directory, final_name)
-    FileUtils.mv file_path, new_path
-  end
 
   def navigate_directory
     directory_searcher = DirectoryNavigator.new base_directory
@@ -75,10 +50,66 @@ class Place::FileRelocator
     name_slugs.shift dismissable_slug_count
   end
 
+
   def inspect_filename
     name_slugs.push filename
-    name_editor = NameChooser.new name_slugs, file_path, filename, extension
+    name_editor = NameChooser.new(
+      name_slugs,
+      destination_directory,
+      filename,
+      extension
+    )
     name_editor.full_screen = true
     @final_name = name_editor.run
+  end
+
+
+  def check_for_duplicates
+    if File.exists? File.join(destination_directory, final_name)
+      warning = <<-TEXT
+      A file named #{final_name}
+      already exists in #{destination_directory}
+
+      Enter "YES" to continue. Do you want to continue? : 
+      TEXT
+      prompt = Keimeno::Prompt.new(warning)
+      answer = prompt.run
+      puts
+
+      case answer
+      when "YES"
+      else
+        puts "ABORT"
+        exit
+      end
+    end
+  end
+
+  def summarize
+    summary = <<-TEXT
+    Relocator and renamer will:
+
+     - move #{file_path} to #{destination_directory}
+     - rename to #{final_name}
+
+    Continue? [Ny] :
+    TEXT
+
+    prompt = Keimeno::Prompt.new(summary)
+    answer = prompt.run
+    puts
+
+    case answer
+    when "y", "Y", "yes"
+      execute
+      puts "Complete."
+    else
+      puts "ABORT"
+    end
+  end
+
+  def execute
+    new_path = File.join(destination_directory, final_name)
+    FileUtils.mv file_path, new_path
   end
 end
