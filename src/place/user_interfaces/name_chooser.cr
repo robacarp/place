@@ -1,10 +1,10 @@
 module Place
   class NameChooser < Keimeno::Base
     getter selected : Int32
-    getter slugs, path, filename, extension
+    getter slugs, destination_directory, filename, extension
     getter suggested_name_slugs
 
-    def initialize(@suggested_name_slugs : Array(String), @path : String, @filename : String, @extension : String)
+    def initialize(@suggested_name_slugs : Array(String), @destination_directory : String, @filename : String, @extension : String)
       @slugs = [] of String
       @slugs = @suggested_name_slugs.dup
       @selected = slugs.size - 1
@@ -15,28 +15,49 @@ module Place
       show_cursor
     end
 
-    def display
-      puts "Based off of the chosen directory, a name is being suggested."
-      puts "If you wish, you may edit the filename or press ^d to finish and move the file."
-
-      display_slugs = slugs.map_with_index do |slug, i|
+    def display_slugs
+      slugs.map_with_index do |slug, i|
         if selected == i
           slug.colorize(:black).on(:white)
         else
           slug
         end
       end.join " - "
+    end
+
+    def display_directory_listing
+      children = Dir.children(destination_directory).sort
+
+      <<-TEXT
+      Contains #{children.size} item#{children.size > 1 ? 's' : ""}:
+
+       - #{children.first(5).each.join("\n - ")}
+      TEXT
+    end
+
+    def display
+      puts "Based off of the chosen directory, this name is being suggested."
+      puts "If you wish, you may edit the filename or press ^d to finish and move the file."
+      puts
+
+      puts "File will be moved to: #{destination_directory}"
+      puts
+      puts display_directory_listing
+      puts
+      puts "------------------"
+      puts
 
       print display_slugs
       print "."
       puts extension
       puts
+
       puts "------------------"
       puts "^d		Finish editing and move file".colorize.bold
       puts
 
       puts "←/→,h/l		select segment"
-      puts "c		change (edit) segment"
+      puts "ENTER		change (edit) segment"
       puts
       puts "^r		revert entire name to original"
       puts "^s		revert to initial suggestion"
@@ -118,13 +139,21 @@ module Place
         insert_segment
       when 'a'
         append_segment
-      when 'c'
-        launch_editor
+      when 'o'
+        open_directory
       when 'h'
         key_left_arrow
       when 'l'
         key_right_arrow
       end
+    end
+
+    def key_enter
+      launch_editor
+    end
+
+    def open_directory
+      Process.run "/usr/bin/open", [destination_directory]
     end
 
     def insert_segment
