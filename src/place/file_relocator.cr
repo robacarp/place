@@ -39,7 +39,7 @@ class Place::FileRelocator
     Continue? [Ny] :
     TEXT
 
-    prompt = Interface::Prompt.new(summary)
+    prompt = Keimeno::Prompt.new(summary)
     answer = prompt.run
 
     case answer

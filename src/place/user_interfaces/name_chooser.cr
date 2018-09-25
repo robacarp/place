@@ -1,5 +1,5 @@
 module Place
-  class NameChooser < Interface::Base
+  class NameChooser < Keimeno::Base
     getter selected : Int32
     getter slugs, path, filename, extension
     getter suggested_name_slugs

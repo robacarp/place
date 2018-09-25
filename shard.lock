@@ -1,0 +1,6 @@
+version: 1.0
+shards:
+  keimeno:
+    path: ../keimeno
+    version: 0.1.0
+

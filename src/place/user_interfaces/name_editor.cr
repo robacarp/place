@@ -1,6 +1,6 @@
 module Place
-  class NameEditor < Interface::Base
-    include Interface::TextInput
+  class NameEditor < Keimeno::Base
+    include Keimeno::TextInput
 
     getter slugs, selected, file
 

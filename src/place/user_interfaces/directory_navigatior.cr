@@ -1,5 +1,5 @@
 module Place
-  class DirectoryNavigator < Interface::Menu
+  class DirectoryNavigator < Keimeno::Menu
     RULE = "------------------------------------"
 
     getter current_dir
@@ -99,7 +99,7 @@ module Place
 
     def key_ctrl_n
       clear
-      new_directory_name = Interface::Prompt.new(
+      new_directory_name = Keimeno::Prompt.new(
         "Create new directory in #{@current_dir.path}:"
       ).run
 
