@@ -5,7 +5,10 @@ module Place
     getter slugs, selected, file
 
     def initialize(@slugs : Array(String), @selected : Int32, @file : String)
+      @original_text = ""
       set_input_text slugs[selected]
+      @cleared_once = false
+      @original_text = slugs[selected]
     end
 
     def display
@@ -30,6 +33,14 @@ module Place
 
     def return_value
       input_text
+    end
+
+    def key_backspace
+      if input_text == @original_text && ! @cleared_once
+        set_input_text ""
+      else
+        super
+      end
     end
 
     # save the edit

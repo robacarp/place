@@ -1,0 +1,5 @@
+[x] Application should detect possible collisions and warn during file renameing
+[ ] Application should keep track of preview & quicklook windows and close them when a file is placed
+[ ] Name editor should show a directory listing so other files can be referenced
+[ ] When hitting ESC on name segment editor, if the original name isn't there, replace it
+[ ] Application should check to make sure file to place exists at startup
