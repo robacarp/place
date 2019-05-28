@@ -1,27 +1,13 @@
-# .
+This is a tool to help manage a filesystem workflow for my paperless filing system.
 
-TODO: Write a description here
+The system is rougly:
 
-## Installation
+- Scan a file, which ends up in an inbox
+- Move that file into a folder, say `Files/Finances/2018/Bank/CheckingStatements/`
+- Rename that file to, `Finances - 2018 - Bank - CheckingStatements - 2018-01-01.pdf`
 
-TODO: Write installation instructions here
+The difficult part of the workflow when executed manually is consistency, but speed is also an issue. Without any automation it takes about 2 minutes to move each file after scanning.
 
-## Usage
+This tool provides a workstation for executing that workflow, ensures consistency between filenames and directory names, and automates a lot of the process.
 
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
-
-## Contributing
-
-1. Fork it (<https://github.com/your-github-user/./fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
-
-## Contributors
-
-- [your-github-user](https://github.com/your-github-user) Robert L Carpenter - creator, maintainer
+![](https://i.imgur.com/fAvTkUl.gif)
