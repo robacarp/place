@@ -10,4 +10,6 @@ The difficult part of the workflow when executed manually is consistency, but sp
 
 This tool provides a workstation for executing that workflow, ensures consistency between filenames and directory names, and automates a lot of the process.
 
+It's the only known user of the [Keimeno](https://github.com/robacarp/keimeno) CLI user interface library.
+
 ![](https://i.imgur.com/fAvTkUl.gif)
