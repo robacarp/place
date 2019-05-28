@@ -12,4 +12,4 @@ This tool provides a workstation for executing that workflow, ensures consistenc
 
 It's the only known user of the [Keimeno](https://github.com/robacarp/keimeno) CLI user interface library.
 
-![](https://i.imgur.com/fAvTkUl.gif)
+![](/assets/demo.gif)
