@@ -12,8 +12,6 @@ module Place
     def initialize(@base_dir : String)
       @current_dir = Dir.new @base_dir
       @heading = ""
-      @options = [] of String
-      @matches = [] of String
 
       repopulate_options
     end
@@ -124,7 +122,7 @@ module Place
       if cursor_active?
         switch_directory options[cursor_position]
       elsif matches.size == 1
-        switch_directory matches.first
+        switch_directory matches.first.text
       end
 
       self.finished = true

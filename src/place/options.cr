@@ -6,11 +6,11 @@ class Place::Options
     @@instance ||= new
   end
 
-  def parse!
-    parser.parse!
+  def parse
+    parser.parse
   end
 
-  def guard!
+  def guard
     if ! File.exists?(placement_dir) || ! File.info(placement_dir).directory?
       error_and_exit "Must supply placement directory"
     end
